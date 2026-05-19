@@ -66,9 +66,9 @@ async function getActress(id: number): Promise<Actress | null> {
         if (!response.ok) {
             throw new Error("Errore nel recupero dati")
         }
-        const dati = await response.json()
+        const dati: unknown = await response.json()
         if (isActress(dati)) {
-            return dati;
+            return dati as Actress;
         }
         throw new Error("Formato dei dati non valido");
 
@@ -82,3 +82,41 @@ async function getActress(id: number): Promise<Actress | null> {
 
 
 getActress(2).then(data => console.log(data)).catch(error => console.error(error))
+
+
+
+// 📌 Milestone 4
+// Crea una funzione getAllActresses che chiama:
+
+// GET /actresses
+// La funzione deve restituire un array di oggetti Actress.
+
+// Può essere anche un array vuoto.
+
+async function getAllActresses(): Promise<Actress | null> {
+    try {
+        const response = await fetch("http://localhost:3333/actresses")
+        if (!response.ok) {
+            throw new Error("Errore nel recupero dati")
+        }
+        const dati: unknown = await response.json()
+
+        if (
+            dati &&
+            typeof dati !== "object" &&
+            "id" in dati &&
+            typeof dati.id === "number"
+            //altri mille controlli 
+
+        ) {
+            throw new Error("Dati non trovati errore")
+        }
+        return dati as Actress
+    } catch (error) {
+        console.error(error)
+        return null;
+    }
+}
+
+
+getAllActresses().then(dati => console.log(dati))
